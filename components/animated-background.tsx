@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-export const AnimatedBackground = () => {
+export const AnimatedBackground = ({ className = '' }: { className?: string }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number>();
   const particlesRef = useRef<Particle[]>([]);
@@ -107,7 +107,7 @@ export const AnimatedBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 -z-10 pointer-events-none"
+      className={className + ' pointer-events-none'}
       style={{
         width: '100%',
         height: '100%',
