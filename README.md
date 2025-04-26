@@ -1,104 +1,138 @@
 # TaskToken Economy Platform
 
-This project is a decentralized TaskToken economy platform built on Ethereum. It includes smart contracts for managing jobs, freelancers, and reputation, as well as a front-end interface for users to interact with the platform.
+A beginner-friendly Web3 gig platform that tokenizes tasks as ERC-20 tokens on Ethereum. It provides both smart contracts (with Hardhat) and a Next.js frontend for users to create, browse, and complete gigs.
 
 ## Table of Contents
 
 - [Overview](#overview)
-- [Smart Contracts](#smart-contracts)
-- [Front End](#front-end)
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
 - [Setup](#setup)
-- [Deployment](#deployment)
+- [Running the Platform](#running-the-platform)
+- [Smart Contracts](#smart-contracts)
+- [Frontend](#frontend)
 - [Testing](#testing)
+- [Contributing](#contributing)
 - [License](#license)
 
 ## Overview
 
-The platform allows freelancers to register, complete jobs, and receive ratings. Clients can post jobs and rate freelancers based on their performance. The reputation of freelancers is tracked on the blockchain.
+This repository contains two main parts:
 
-## Smart Contracts
+1. **Smart Contracts** – Solidity contracts for task registration (`Identity.sol`), job management, reputation tracking, and escrow, deployed via Hardhat.
+2. **Frontend** – A Next.js (TypeScript) application under the `project/` folder, with Tailwind CSS and Framer Motion for UI.
 
-The smart contracts are written in Solidity and include the following:
+## Project Structure
 
-- `Escrow.sol`: Manages payment escrow between clients and freelancers.
-- `Identity.sol`: Manages user identities.
-- `Job.sol`: Manages job postings and assignments.
-- `Lock.sol`: Example contract for locking funds.
-- `Reputation.sol`: Manages freelancer ratings and reputation.
+```plaintext
+.
+├─ contracts/              # Solidity smart contracts
+│  ├─ Identity.sol         # User registration
+│  ├─ Job.sol              # Job postings
+│  ├─ Reputation.sol       # Freelancer ratings
+│  └─ ...
+├─ scripts/                # Hardhat deployment scripts
+├─ test/                   # Smart contract tests
+├─ project/                # Next.js front-end app
+│  ├─ app/                 # App router pages and layouts
+│  ├─ components/          # React components
+│  ├─ globals.css          # Global styles
+│  └─ ...
+├─ hardhat.config.js       # Hardhat configuration
+├─ package.json            # Root dependencies (Hardhat, ethers)
+├─ package-lock.json
+└─ README.md               # This file
+```
 
-### Contract Details
+## Prerequisites
 
-- [Escrow.sol](contracts/Escrow.sol)
-- [Identity.sol](contracts/Identity.sol)
-- [Job.sol](contracts/Job.sol)
-- [Lock.sol](contracts/Lock.sol)
-- [Reputation.sol](contracts/Reputation.sol)
-
-## Front End
-
-The front end is built using React and allows users to interact with the smart contracts. Users can:
-
-- Register as a freelancer or client.
-- Post and manage jobs.
-- Assign jobs to freelancers.
-- Rate freelancers upon job completion.
+- Node.js (v16 or above)
+- npm
+- [Hardhat](https://hardhat.org)
+- MetaMask or another Web3 wallet (optional for local testing)
 
 ## Setup
 
-### Prerequisites
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/bharat3645/Task-Tokenizer.git
+   cd Task-Tokenizer
+   ```
 
-- Node.js
-- npm
-- Hardhat
-- MetaMask (for interacting with the Ethereum network)
-
-### Installation
-
-1. Clone the repository:
-
-   ```sh
-   git clone https://github.com/dhanush-adi/Web3-gig-platform.git
-   cd Web3-gig-platform
-2. Install dependencies:
-
-   ```sh
+2. **Install dependencies**
+   ```bash
    npm install
+   cd project && npm install
+   ```
 
-3. Create a .env file in the root directory and add your environment variables:
+3. **Configure environment**
+   - Copy `.env.example` to `.env` in root and `project/` if needed.
+   - Fill in your RPC URL and private key:
+     ```dotenv
+     # root/.env
+     ALCHEMY_SEPOLIA_URL=https://sepolia.infura.io/v3/YOUR_KEY
+     PRIVATE_KEY=your_wallet_private_key
 
-   ALCHEMY_SEPOLIA_URL=https://sepolia.infura.io/v3/your-infura-project-id
-   
-   PRIVATE_KEY=your-private-key
+     # project/.env.local
+     NEXT_PUBLIC_RPC_URL=${ALCHEMY_SEPOLIA_URL}
+     ```
 
-## Deployment
+## Running the Platform
 
-Deploying Smart Contracts
+### 1. Compile and Deploy Contracts
 
-1. Compile the contracts:
+```bash
+# in root folder
+npx hardhat compile
+npx hardhat run scripts/deploy.js --network sepolia
+```
 
-   ```sh
-   npx hardhat compile
+This will deploy contracts and output addresses in `deployed-addresses.json`.
 
-2. Deploy the contracts to the Sepolia network:
+### 2. Launch Frontend
 
-    ```sh
-    npx hardhat run scripts/deploy.js --network sepolia
+```bash
+# in project folder
+npm run dev
+```
 
-## Running the Front End
+Navigate to http://localhost:3000 to view the app.
 
-1. Running the Front End:
-   ```sh
-   npm run dev
+## Smart Contracts
 
-2. Open your browser and navigate to http://localhost:3000
-   
+- `Identity.sol` – register users on-chain
+- `Job.sol` – create and manage gigs
+- `Reputation.sol` – track freelancer ratings
+
+Events, mappings, and functions are documented in each contract file.
+
+## Frontend
+
+Built with Next.js (App Router), TypeScript, Tailwind CSS, and Framer Motion.
+Features:
+
+- Connect wallet and call smart contracts
+- List and browse gigs
+- Apply for tasks (mocks or real transactions)
+- Interactive UI with animated backgrounds
+
 ## Testing
 
-1. To run the tests, use the following command:
+Run unit tests for smart contracts:
+```bash
+npx hardhat test
+```
 
-   ```sh
-   npx hardhat test
+## Contributing
+
+Contributions are welcome!
+
+1. Fork the repo
+2. Create a branch (`git checkout -b feature/YourFeature`)
+3. Commit your changes (`git commit -m "feat: add feature"`)
+4. Push to the branch (`git push origin feature/YourFeature`)
+5. Open a Pull Request
 
 ## License
-This project is licensed under the MIT License.
 
+This project is licensed under the MIT License.
