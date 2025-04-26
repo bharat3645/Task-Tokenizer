@@ -9,13 +9,10 @@ import { useParams, useRouter } from "next/navigation";
 function GigDetails() {
   const [jobs, setJobs] = useState([]);
   const { account, signer, connectWallet } = useWallet();
-  const INFURA_PROJECT_ID =
-    "<Enough api key searching for today. Get one yourself>"; // Replace with your Infura project ID
-  const provider = new ethers.providers.JsonRpcProvider(
-    `https://sepolia.infura.io/v3/${INFURA_PROJECT_ID}`
-  );
+  const providerUrl = process.env.NEXT_PUBLIC_PROVIDER_URL ?? `https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID}`;
+  const provider = new ethers.providers.JsonRpcProvider(providerUrl);
 
-  const contractAddress = "0x0b06c1988aDB165202aC09E25Cc1d55a282034D3"; // Replace with your contract address
+  const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
   const contractAbi = [
     "function jobCounter() view returns (uint256)",
     "function jobs(uint256) view returns (address client, string description, uint256 budget, bool isOpen, address freelancer)",

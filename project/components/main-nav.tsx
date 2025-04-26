@@ -1,6 +1,6 @@
 "use client";
 
-import { Wallet2 } from "lucide-react";
+import { Wallet2, Briefcase, Users, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -12,24 +12,31 @@ import {
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
 import { useWallet } from "@/context/WalletContext";
+import Link from "next/link";
 
 export function MainNav() {
   const { account, connectWallet } = useWallet();
 
   return (
-    <div className="flex items-center space-x-4 lg:space-x-6 z-0">
+    <div className="flex items-center space-x-4 lg:space-x-6 z-50">
+      <Link href="/" className="flex items-center space-x-2">
+        <Briefcase className="h-6 w-6 text-primary" />
+        <span className="font-bold text-xl">Task-Tokenizer</span>
+      </Link>
+      
       <NavigationMenu>
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>Jobs</NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-transparent">Jobs</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                 <li className="row-span-3">
                   <NavigationMenuLink asChild>
                     <a
-                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                      className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-primary/10 to-primary/5 p-6 no-underline outline-none focus:shadow-md"
                       href="/"
                     >
+                      <Briefcase className="h-6 w-6 mb-2" />
                       <div className="mb-2 mt-4 text-lg font-medium">
                         Featured Jobs
                       </div>
@@ -73,7 +80,7 @@ export function MainNav() {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>Freelancers</NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-transparent">Freelancers</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                 {freelancerCategories.map((category) => (
@@ -89,7 +96,7 @@ export function MainNav() {
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>Dashboard</NavigationMenuTrigger>
+            <NavigationMenuTrigger className="bg-transparent">Dashboard</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
                 {dashboardItems.map((item) => (
@@ -112,7 +119,7 @@ export function MainNav() {
         className="ml-4"
       >
         <Wallet2 className="mr-2 h-4 w-4" />
-        {account ? `Connected: ${account}` : "Connect Wallet"}
+        {account ? `${account.slice(0, 6)}...${account.slice(-4)}` : "Connect Wallet"}
       </Button>
     </div>
   );

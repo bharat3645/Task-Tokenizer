@@ -23,13 +23,21 @@ async function main() {
   console.log("✅ Reputation Contract Deployed at:", await reputation.getAddress());
 
   
-  const freelancerAddress = "0x0Fba7C01Fb2a8Bd39e6C3f7635a299309aa71501";
-
-  
   const Escrow = await ethers.getContractFactory("Escrow");
-  const escrow = await Escrow.deploy(freelancerAddress, { value: ethers.parseEther("0.01") });
+  const escrow = await Escrow.deploy(deployer.address, { value: ethers.parseEther("0.01") });
   await escrow.waitForDeployment();
   console.log("✅ Escrow Contract Deployed at:", await escrow.getAddress());
+
+  // Save deployed addresses to a file for frontend use
+  const fs = require("fs");
+  const addresses = {
+    identity: await identity.getAddress(),
+    job: await job.getAddress(),
+    reputation: await reputation.getAddress(),
+    escrow: await escrow.getAddress(),
+  };
+  fs.writeFileSync("deployed-addresses.json", JSON.stringify(addresses, null, 2));
+  console.log("📝 Contract addresses saved to deployed-addresses.json");
 }
 
 main().catch((error) => {

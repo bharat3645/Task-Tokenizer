@@ -1,6 +1,5 @@
 "use client"
 
-import { AnimatedBackground } from "@/components/animated-background"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -37,8 +36,8 @@ const featuredJobs = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background/80 text-foreground">
-      <AnimatedBackground />
+    <div className="min-h-screen text-foreground">
+      {/* Global background applied in root layout */}
       {/* Hero Section */}
       <main className="container mx-auto px-4 pt-32">
         <motion.div
