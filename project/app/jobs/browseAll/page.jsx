@@ -15,27 +15,18 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-interface Job {
-  id: number;
-  client: string;
-  description: string;
-  budget: string;
-  isOpen: boolean;
-  freelancer: string;
-}
-
 export default function JobsPage() {
-  const [jobs, setJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const { account, signer, connectWallet } = useWallet();
-  const providerUrl = process.env.NEXT_PUBLIC_PROVIDER_URL ?? `https://sepolia.infura.io/v3/26dbdcda81b64b77acb2273c0aa828dd`;
+  const providerUrl = process.env.NEXT_PUBLIC_PROVIDER_URL ?? `https://sepolia.infura.io/v3/${process.env.NEXT_PUBLIC_INFURA_PROJECT_ID}`;
   const provider = new ethers.providers.JsonRpcProvider(providerUrl);
 
-  const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!;
+  const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
   const contractAbi = [
     "function jobCounter() view returns (uint256)",
     "function jobs(uint256) view returns (address client, string description, uint256 budget, bool isOpen, address freelancer)",
-  ];
+  ]; // Replace with your contract ABI
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -50,11 +41,10 @@ export default function JobsPage() {
         contractAbi,
         provider
       );
-      
       try {
         const jobCountBN = await contract.jobCounter();
         const jobCount = jobCountBN.toNumber();
-        const tempJobs: Job[] = [];
+        const tempJobs = [];
 
         for (let i = 1; i <= jobCount; i++) {
           const jobData = await contract.jobs(i);
@@ -71,9 +61,8 @@ export default function JobsPage() {
         setJobs(tempJobs);
       } catch (err) {
         console.error("Failed to fetch jobs:", err);
-      } finally {
-        setLoading(false);
       }
+      setLoading(false);
     };
 
     fetchJobs();
@@ -91,7 +80,7 @@ export default function JobsPage() {
         {loading ? (
           <p className="text-center text-muted-foreground">Loading...</p>
         ) : jobs.length > 0 ? (
-          jobs.map((gig: Job) => (
+          jobs.map((gig) => (
             <div
               key={gig.id}
               className="group relative bg-card rounded-lg overflow-hidden border border-[hsl(var(--border))] p-6 hover:shadow-lg transition-all duration-300"
