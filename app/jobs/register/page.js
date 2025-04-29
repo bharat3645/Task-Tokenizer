@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ethers } from "ethers";
 import { useWallet } from "@/context/WalletContext";
 
-export default function JobsPage() {
-  const [jobs, setJobs] = useState([]);
+export default function PostJobPage() {
+  const [jobName, setJobName] = useState("");
   const [description, setDescription] = useState("");
   const [budget, setBudget] = useState("");
   const { account, provider, signer, connectWallet } = useWallet();
@@ -17,54 +17,26 @@ export default function JobsPage() {
       console.error("Wallet not connected");
       return;
     }
-
-    // Validate the budget input
+    if (!jobName.trim()) {
+      console.error("Job name is required");
+      return;
+    }
     if (!/^\d+(\.\d+)?$/.test(budget)) {
       console.error("Invalid budget value");
       return;
     }
 
     try {
-      const contractAddress = "0x0b06c1988aDB165202aC09E25Cc1d55a282034D3"; // Replace with your contract address
+      const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
       const contractAbi = [
         "function postJob(string calldata _description, uint256 _budget) external",
-      ]; // Replace with your contract ABI
-
-      const escrowContractAddress =
-        "0x3Ff5e18C562Bf2154f4106bD84593a176A4E0f70"; // Replace with your escrow contract address
-      const escrowContractAbi = [
-        "function createEscrow(address _client, uint256 _amount) external payable",
-      ]; // Replace with your escrow contract ABI
-
-      // Post the job
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractAbi,
-        signer
-      );
-      const tx = await contract.postJob(
-        description,
-        ethers.utils.parseEther(budget)
-      );
+      ];
+      const contract = new ethers.Contract(contractAddress, contractAbi, signer);
+      const tx = await contract.postJob(description, ethers.utils.parseEther(budget));
       await tx.wait();
-      console.log("Job posted:", tx);
+      console.log("Job posted on-chain:", tx);
 
-      // Trigger the payment using the escrow contract
-      const escrowContract = new ethers.Contract(
-        escrowContractAddress,
-        escrowContractAbi,
-        signer
-      );
-      const escrowTx = await escrowContract.createEscrow(
-        account,
-        ethers.utils.parseEther(budget),
-        {
-          value: ethers.utils.parseEther(budget),
-        }
-      );
-      await escrowTx.wait();
-      console.log("Payment triggered:", escrowTx);
-
+      setJobName("");
       setDescription("");
       setBudget("");
       setIsSubmitted(true);
@@ -75,23 +47,29 @@ export default function JobsPage() {
 
   return (
     <div className="p-4 pt-20">
-      <h1 className="text-2xl font-bold mb-4">Available Jobs</h1>
+      <h1 className="text-2xl font-bold mb-4">Post a Job</h1>
       {!account ? (
         <>
-          <button
-            onClick={connectWallet}
-            className="bg-blue-500 text-white p-2 rounded"
-          >
+          <button onClick={connectWallet} className="bg-blue-500 text-white p-2 rounded">
             Connect Wallet
           </button>
           <p>Connect your wallet to post a job.</p>
         </>
       ) : (
-        <form onSubmit={handleSubmit} className="mb-4 space-y-2">
+        <form onSubmit={handleSubmit} className="mb-4 space-y-4">
           <div>
-            <label className="block">Job Description:</label>
-            <textarea
+            <label className="block font-medium">Job Name:</label>
+            <input
               type="text"
+              value={jobName}
+              onChange={(e) => setJobName(e.target.value)}
+              className="border p-2 rounded w-full"
+              required
+            />
+          </div>
+          <div>
+            <label className="block font-medium">Job Description:</label>
+            <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="border p-2 rounded w-full"
@@ -99,7 +77,7 @@ export default function JobsPage() {
             />
           </div>
           <div>
-            <label className="block">Budget (ETH):</label>
+            <label className="block font-medium">Budget (ETH):</label>
             <input
               type="text"
               value={budget}
@@ -113,7 +91,7 @@ export default function JobsPage() {
           </button>
         </form>
       )}
-      <p>{isSubmitted && "Successfully submitted"}</p>
+      {isSubmitted && <p className="text-green-500">Job successfully submitted!</p>}
     </div>
   );
 }

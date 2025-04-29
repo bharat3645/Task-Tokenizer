@@ -32,9 +32,20 @@ export function MainNav() {
               <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                 <li className="row-span-3">
                   <NavigationMenuLink asChild>
-                    <a
+                    <button
+                      onClick={() => {
+                        // If we're already on the home page
+                        if (window.location.pathname === '/') {
+                          document.getElementById('featured-jobs')?.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                          })
+                        } else {
+                          // If we're on another page, navigate home first
+                          window.location.href = '/#featured-jobs'
+                        }
+                      }}
                       className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-primary/10 to-primary/5 p-6 no-underline outline-none focus:shadow-md"
-                      href="/"
                     >
                       <Briefcase className="h-6 w-6 mb-2" />
                       <div className="mb-2 mt-4 text-lg font-medium">
@@ -43,7 +54,7 @@ export function MainNav() {
                       <p className="text-sm leading-tight text-muted-foreground">
                         Discover top opportunities in the Web3 space
                       </p>
-                    </a>
+                    </button>
                   </NavigationMenuLink>
                 </li>
                 <li>
