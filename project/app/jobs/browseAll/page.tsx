@@ -31,7 +31,7 @@ export default function JobsPage() {
   const providerUrl = process.env.NEXT_PUBLIC_PROVIDER_URL ?? `https://sepolia.infura.io/v3/26dbdcda81b64b77acb2273c0aa828dd`;
   const provider = new ethers.providers.JsonRpcProvider(providerUrl);
 
-  const contractAddress = "0x26D45e48c88EBDa8555E9744c8A6F6B87dcC6000";
+  const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS!;
   const contractAbi = [
     "function jobCounter() view returns (uint256)",
     "function jobs(uint256) view returns (address client, string description, uint256 budget, bool isOpen, address freelancer)",
