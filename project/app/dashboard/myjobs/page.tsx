@@ -1,3 +1,4 @@
+// Test commit to verify GPG signing
 "use client"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
