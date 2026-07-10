@@ -5,6 +5,7 @@ A beginner-friendly Web3 gig platform that tokenizes tasks as ERC-20 tokens on E
 ## Table of Contents
 
 - [Overview](#overview)
+- [Current status](#current-status)
 - [Project Structure](#project-structure)
 - [Prerequisites](#prerequisites)
 - [Setup](#setup)
@@ -21,6 +22,15 @@ This repository contains two main parts:
 
 1. **Smart Contracts** – Solidity contracts for task registration (`Identity.sol`), job management, reputation tracking, and escrow, deployed via Hardhat.
 2. **Frontend** – A Next.js (TypeScript) application under the `project/` folder, with Tailwind CSS and Framer Motion for UI.
+
+## Current status
+
+Stated plainly, so contributors and forkers know what's real today:
+
+- **Wallet connect works.** `project/context/WalletContext.tsx` connects MetaMask via the injected `window.ethereum` provider (ethers v5's `Web3Provider`), tracks the active account/network, and reacts to account/chain changes.
+- **The frontend needs no RPC configuration of its own.** It talks to whatever network the user's wallet is connected to — there's no `NEXT_PUBLIC_RPC_URL` or similar to set.
+- **Job and freelancer listings on the homepage are static demo data** (`project/app/page.tsx`), not yet read from the deployed `Job` / `Reputation` contracts. Search/browse works against that demo data today.
+- **No automated tests exist yet for the actual contracts** (`Identity.sol`, `Job.sol`, `Reputation.sol`, `Escrow.sol`). The repo previously carried the unmodified `npx hardhat init` sample test (`test/Lock.js`, deploying a `Lock` contract that isn't part of this project); it's been removed since it referenced a contract that doesn't exist here. Contributions adding real coverage for the four contracts above are very welcome.
 
 ## Project Structure
 
@@ -39,6 +49,7 @@ This repository contains two main parts:
 │  ├─ globals.css          # Global styles
 │  └─ ...
 ├─ hardhat.config.js       # Hardhat configuration
+├─ .env.example            # Template for root .env (Hardhat/Sepolia)
 ├─ package.json            # Root dependencies (Hardhat, ethers)
 ├─ package-lock.json
 └─ README.md               # This file
@@ -49,7 +60,7 @@ This repository contains two main parts:
 - Node.js (v16 or above)
 - npm
 - [Hardhat](https://hardhat.org)
-- MetaMask or another Web3 wallet (optional for local testing)
+- MetaMask or another Web3 wallet (required to use the frontend — there is no fallback RPC path)
 
 ## Setup
 
@@ -65,17 +76,19 @@ This repository contains two main parts:
    cd project && npm install
    ```
 
-3. **Configure environment**
-   - Copy `.env.example` to `.env` in root and `project/` if needed.
-   - Fill in your RPC URL and private key:
-     ```dotenv
-     # root/.env
-     ALCHEMY_SEPOLIA_URL=https://sepolia.infura.io/v3/YOUR_KEY
-     PRIVATE_KEY=your_wallet_private_key
-
-     # project/.env.local
-     NEXT_PUBLIC_RPC_URL=${ALCHEMY_SEPOLIA_URL}
+3. **Configure environment (root only)**
+   - Copy `.env.example` to `.env` in the repo root:
+     ```bash
+     cp .env.example .env
      ```
+   - Fill in your Sepolia RPC URL and a throwaway deployer private key:
+     ```dotenv
+     # .env
+     ALCHEMY_SEPOLIA_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_API_KEY
+     PRIVATE_KEY=your_wallet_private_key_without_0x_prefix
+     ```
+   - The `project/` frontend does **not** need a `.env` file — it connects
+     directly through whatever wallet the user has installed.
 
 ## Running the Platform
 
@@ -103,6 +116,7 @@ Navigate to http://localhost:3000 to view the app.
 - `Identity.sol` – register users on-chain
 - `Job.sol` – create and manage gigs
 - `Reputation.sol` – track freelancer ratings
+- `Escrow.sol` – hold and release payment for a job
 
 Events, mappings, and functions are documented in each contract file.
 
@@ -111,9 +125,8 @@ Events, mappings, and functions are documented in each contract file.
 Built with Next.js (App Router), TypeScript, Tailwind CSS, and Framer Motion.
 Features:
 
-- Connect wallet and call smart contracts
-- List and browse gigs
-- Apply for tasks (mocks or real transactions)
+- Connect wallet via MetaMask (`window.ethereum`) and read the active account/network
+- Browse jobs and freelancers (currently demo data — see [Current status](#current-status))
 - Interactive UI with animated backgrounds
 
 ## Testing
@@ -121,7 +134,13 @@ Features:
 Run unit tests for smart contracts:
 ```bash
 npx hardhat test
+# or, equivalently:
+npm test
 ```
+
+There are currently no tests covering `Identity.sol`, `Job.sol`, `Reputation.sol`,
+or `Escrow.sol` — see [Current status](#current-status). PRs adding coverage
+are welcome.
 
 ## Contributing
 
