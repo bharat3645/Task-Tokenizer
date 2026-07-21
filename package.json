@@ -1,14 +1,21 @@
 {
-  "name": "TaskToken",
+  "name": "task-tokenizer",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "hardhat test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "ethereum",
+    "solidity",
+    "hardhat",
+    "smart-contracts",
+    "web3",
+    "freelance-marketplace"
+  ],
+  "author": "Bharat Singh Parihar (https://github.com/bharat3645)",
+  "license": "MIT",
+  "description": "Hardhat project for Task-Tokenizer — Solidity smart contracts (Identity, Job, Reputation, Escrow) for a Web3 task/gig marketplace on Ethereum.",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@nomicfoundation/hardhat-verify": "^2.0.12",
